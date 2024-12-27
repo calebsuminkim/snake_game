@@ -1,6 +1,6 @@
 from turtle import Turtle
 STARTING_POSITIONS = [(0, 0), (-20, 0), (-40, 0)]
-MOVE_DISTANCE = 20
+# MOVE_DISTANCE = 20 # When snake eat an item, the speed should be changed.
 UP = 90
 DOWN = 270
 LEFT = 180
@@ -12,21 +12,29 @@ class Snake:
         self.segments = []
         self.create_snake()
         self.head = self.segments[0]            # snake's head
+        self.step = 20
 
     def create_snake(self):
         for position in STARTING_POSITIONS:
             self.add_segment(position)
 
     def add_segment(self, position):
-            new_segment = Turtle(shape='square')
-            new_segment.speed(1)
-            new_segment.color("white")
-            new_segment.penup()
-            new_segment.goto(position)
-            self.segments.append(new_segment)
+        new_segment = Turtle(shape='square')
+        # new_segment.speed("slowest")
+        new_segment.color("white")
+        new_segment.penup()
+        new_segment.goto(position)
+        self.segments.append(new_segment)
+
+    def reset(self):
+        for seg in self.segments:
+                seg.goto(1000, 1000) # 화면에서 사라지게 만듬
+        self.segments.clear() # 뱀 삭제
+        self.create_snake() # 새 뱀 생성
+        self.head = self.segments[0]
 
     def extend(self):
-        # 마지막 세그먼트가 있던 그 자리에 하나 새로 생성
+        # Create a new one on where the last segment was.
         self.add_segment(self.segments[-1].position())
 
     def move(self):
@@ -34,7 +42,7 @@ class Snake:
             new_x = self.segments[seg_num - 1].xcor()
             new_y = self.segments[seg_num - 1].ycor()
             self.segments[seg_num].goto(new_x, new_y)
-        self.head.forward(MOVE_DISTANCE)
+        self.head.forward(self.step)
 
     def up(self):
         if self.head.heading() != DOWN:
